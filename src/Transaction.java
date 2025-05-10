@@ -1,22 +1,20 @@
 import java.util.Date;
 import java.util.UUID;
 
-public class Transaction {
-    private final UUID id;
+public class Transaction extends BaseEntity {
     private Investment investment;
     private String type;
     private double amount;
     private double price;
     private final Date date;
 
-    // Constructor
-    // Default constructor
+    // Construtor padrão
     public Transaction() {
-        this.id = UUID.randomUUID();
+        super();
         this.date = new Date();
     }
 
-    // Constructor with parameters
+    // Construtor completo
     public Transaction(Investment investment, String type, double amount, double price) {
         this();
         this.investment = investment;
@@ -25,56 +23,42 @@ public class Transaction {
         this.price = price;
     }
 
-    // Getters and Setters
-    // id
-    public UUID getId() {
-        return id;
-    }
-
-    // investment
-    public Investment getInvestment() {
-        return investment;
-    }
-
-    public void setInvestment(Investment investment) {
-        this.investment = investment;
-    }
-
-    // type
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
+    // Sobrecarga de construtor com menos parâmetros
+    public Transaction(String type, double amount) {
+        this();
         this.type = type;
-    }
-
-    // amount
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
         this.amount = amount;
+        this.price = 0.0;
     }
 
-    // price
-    public double getPrice() {
-        return price;
-    }
+    // Getters e Setters
+    public Investment getInvestment() { return investment; }
+    public void setInvestment(Investment investment) { this.investment = investment; setUpdatedAtNow(); }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; setUpdatedAtNow(); }
 
-    // date
-    public Date getDate() {
-        return date;
-    }
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; setUpdatedAtNow(); }
 
-    // Utility methods
-    // Gets the unit price of the transaction
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; setUpdatedAtNow(); }
+
+    public Date getDate() { return date; }
+
+    // Método utilitário
     public double getUnitPrice() {
-        return price / amount;
+        return amount != 0 ? price / amount : 0;
+    }
+
+    // Override de toString
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "type='" + type + '\'' +
+                ", amount=" + amount +
+                ", price=" + price +
+                ", date=" + date +
+                '}';
     }
 }

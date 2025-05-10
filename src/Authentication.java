@@ -1,59 +1,89 @@
 import java.util.Date;
 
-public class Authentication {
+public class Authentication extends BaseEntity {
     private User user;
     private String verificationCode;
     private Date expirationDate;
     private boolean verified;
 
-    // Constructor
+    // Construtor padrão
     public Authentication(User user) {
         this.user = user;
         this.verified = false;
     }
 
-    // Getters and Setters
-    // user
+    // Getters e Setters
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+        setUpdatedAtNow();
     }
 
-    // verificationCode
     public String getVerificationCode() {
         return verificationCode;
     }
 
-    // expirationDate
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+        setUpdatedAtNow();
+    }
+
     public Date getExpirationDate() {
         return expirationDate;
     }
 
-    // verified
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+        setUpdatedAtNow();
+    }
+
     public boolean isVerified() {
         return verified;
     }
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+        setUpdatedAtNow();
     }
 
-    // Utility methods
-    // Generate a verification code
-    public void generateVerificationCode() {
-        // Logic to generate a TOTP
+    // Sobrecarga (Overload)
+    public void validateVerificationCode() {
+        validateVerificationCode(this.verificationCode);
     }
 
-    // Check if the verification code is valid
+    // Validação do código fornecido
     public void validateVerificationCode(String code) {
-        // Logic to check if the provided TOTP matches the generated code
+        // Lógica para validar o código (a ser implementada)
+        if (this.verificationCode != null && this.verificationCode.equals(code)) {
+            this.verified = true;
+        } else {
+            this.verified = false;
+        }
+        setUpdatedAtNow();
     }
 
-    // Send verification code to user
+    // Gerar o código de verificação (simulado)
+    public void generateVerificationCode() {
+        // Lógica fictícia de geração
+        this.verificationCode = "123456"; // Substituir por lógica real de TOTP
+        this.expirationDate = new Date(System.currentTimeMillis() + 5 * 60 * 1000); // 5 minutos de validade
+        setUpdatedAtNow();
+    }
+
+    // Envio do código (simulado)
     public void sendVerificationCode() {
-        // Logic to send the verification code based on the channel chosen
+        // Lógica de envio (simulado)
+        System.out.println("Enviando código para o usuário " + user.getName() + ": " + verificationCode);
+    }
+
+    // Sobrescrita (Override)
+    @Override
+    public String toString() {
+        return "Authentication [User=" + user.getName() +
+                ", Verified=" + verified +
+                ", ExpirationDate=" + expirationDate + "]";
     }
 }
