@@ -1,6 +1,17 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Main {
     public static void main(String[] args) {
         // Declarando as variáveis fora dos blocos
+        HashMap<User, Cryptocurrency> investments = new HashMap<>();
+
+        ArrayList<Cryptocurrency> cryptos = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
+
         User user = null;
         Company company = null;
         Cryptocurrency crypto = null;
@@ -10,6 +21,17 @@ public class Main {
             user.setName("Tio Patinhas");
             user.setEmail("patinhas@email.com");
             System.out.println("Usuário criado: " + user.getName());
+
+            // user2
+            User user2 = new User();
+            user2.setName("Pato Donald");
+            user2.setEmail("donald@email.com");
+            System.out.println("Usuário criado: " + user2.getName());
+
+            // array list 1
+            users.add(user);
+            users.add(user2);
+
         } catch (Exception e) {
             System.out.println("Erro ao criar Usuário: " + e.getMessage());
         }
@@ -30,6 +52,17 @@ public class Main {
             crypto.setSymbol("BTC");
             crypto.setPrice(250000.0);
             System.out.println("Criptomoeda criada: " + crypto.getName());
+
+            // crypto2
+            Cryptocurrency crypto2 = new Cryptocurrency();
+            crypto2.setName("Ethereum");
+            crypto2.setSymbol("ETH");
+            crypto2.setPrice(18000.0);
+            System.out.println("Criptomoeda criada: " + crypto2.getName());
+
+            // array list 2
+            cryptos.add(crypto);
+            cryptos.add(crypto2);
         } catch (Exception e) {
             System.out.println("Erro ao criar Criptomoeda: " + e.getMessage());
         }
@@ -53,6 +86,23 @@ public class Main {
             System.out.println("Notificação criada para: " + notification.getUser().getName() + " via " + notification.getChannel());
         } catch (Exception e) {
             System.out.println("Erro ao criar Notificação: " + e.getMessage());
+        }
+
+        // hashmap com 2 classes (user e investment)
+        investments.put(user, crypto);
+
+        // log array lists and hashmaps
+        System.out.println(investments);
+        System.out.println(cryptos);
+        System.out.println(users);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt"))) {
+            for (User u : users) {
+                writer.write(u.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
         }
 
     }
