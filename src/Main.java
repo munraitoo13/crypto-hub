@@ -105,5 +105,60 @@ public class Main {
             System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
         }
 
+        try {
+            runDbCrudDemo();  // INSERT -> UPDATE -> FIND -> LIST -> DELETE -> LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
+  
+    // ===================== FASE 5 - TESTES DB (Investment) =====================
+
+    static long dbTestInsert() throws Exception {
+        InvestmentDAO dao = new InvestmentDAO();
+        long userId = 1L;     // ajuste se necessário
+        long companyId = 1L;  // ajuste se necessário
+        long cryptoId = 1L;   // ajuste se necessário
+        long id = dao.insert(userId, companyId, cryptoId, 0.25, 320000.00);
+        System.out.println("[DB][INSERT] id=" + id);
+        return id;
+    }
+
+    static void dbTestUpdate(long id) throws Exception {
+        InvestmentDAO dao = new InvestmentDAO();
+        int rows = dao.updateById(id, 0.30, 315000.00);
+        System.out.println("[DB][UPDATE] rows=" + rows + " id=" + id);
+    }
+
+    static void dbTestFind(long id) throws Exception {
+        InvestmentDAO dao = new InvestmentDAO();
+        var row = dao.findById(id);
+        System.out.println("[DB][FIND] " + row);
+    }
+
+    static void dbTestListAll() throws Exception {
+        InvestmentDAO dao = new InvestmentDAO();
+        java.util.List<InvestmentDAO.InvestmentRow> all = dao.listAll();
+        System.out.println("[DB][LIST] total=" + all.size());
+        for (var r : all) System.out.println("  - " + r);
+    }
+
+    static void dbTestDelete(long id) throws Exception {
+        InvestmentDAO dao = new InvestmentDAO();
+        int rows = dao.deleteById(id);
+        System.out.println("[DB][DELETE] rows=" + rows + " id=" + id);
+    }
+
+    /** Executa a sequência completa de testes da Fase 5 para Investment */
+    static void runDbCrudDemo() throws Exception {
+        long novoId = dbTestInsert();   // INSERT
+        dbTestUpdate(novoId);           // UPDATE
+        dbTestFind(novoId);             // SELECT by ID
+        dbTestListAll();                // SELECT *
+        dbTestDelete(novoId);           // DELETE
+        dbTestListAll();                // SELECT * (confirma remoção)
+    }
+  
+// ===================== FIM FASE 5 - TESTES DB =====================
 }
