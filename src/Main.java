@@ -112,6 +112,7 @@ public class Main {
         }
 
     }
+  
     // ===================== FASE 5 - TESTES DB (Investment) =====================
 
     static long dbTestInsert() throws Exception {
@@ -158,6 +159,6 @@ public class Main {
         dbTestDelete(novoId);           // DELETE
         dbTestListAll();                // SELECT * (confirma remoção)
     }
+  
 // ===================== FIM FASE 5 - TESTES DB =====================
-
 }

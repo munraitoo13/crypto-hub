@@ -134,3 +134,4 @@ public class Alert extends BaseEntity {
                 '}';
     }
 }
+

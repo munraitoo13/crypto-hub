@@ -74,3 +74,4 @@ public class NotificationManager {
         return "NotificationManager managing " + notifications.size() + " notifications.";
     }
 }
+

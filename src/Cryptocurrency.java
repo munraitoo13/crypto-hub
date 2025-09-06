@@ -59,3 +59,4 @@ public class Cryptocurrency extends BaseEntity {
         return String.format("%s (%s) - Price: %.2f", name, symbol, price);
     }
 }
+
