@@ -105,6 +105,12 @@ public class Main {
             System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
         }
 
+        try {
+            runDbCrudDemo();  // INSERT -> UPDATE -> FIND -> LIST -> DELETE -> LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
     // ===================== FASE 5 - TESTES DB (Investment) =====================
 
