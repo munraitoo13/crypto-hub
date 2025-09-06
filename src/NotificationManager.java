@@ -15,8 +15,17 @@ public class NotificationManager {
         if (instance == null) {
             instance = new NotificationManager();
         }
-
         return instance;
+    }
+
+    // Getter for notifications
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    // Setter for notifications (optional, based on your design)
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     // Method to add a notification to the list
@@ -27,13 +36,11 @@ public class NotificationManager {
     // Method to send notifications
     public void sendNotifications() {
         List<Notification> processedNotifications = new ArrayList<>();
-
         for (Notification notification : notifications) {
             if (notification.send()) {
                 processedNotifications.add(notification);
             }
         }
-
         notifications.removeAll(processedNotifications);
     }
 
@@ -59,5 +66,11 @@ public class NotificationManager {
         }
 
         sendNotifications();
+    }
+
+    // Override toString to describe the state of NotificationManager
+    @Override
+    public String toString() {
+        return "NotificationManager managing " + notifications.size() + " notifications.";
     }
 }

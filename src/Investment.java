@@ -1,24 +1,22 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
-public class Investment {
-    private final UUID id;
+public class Investment extends BaseEntity {
     private User user;
     private Company company;
     private Cryptocurrency cryptocurrency;
     private double amount;
     private double price;
-    private Date date;
     private final List<Transaction> transactions;
 
     // Constructors
-    // Default constructor
     public Investment() {
-        this.id = UUID.randomUUID();
-        this.date = new Date();
-        this.transactions = new ArrayList<Transaction>();
+        super();
+        this.transactions = new ArrayList<>();
     }
 
-    // Constructor with parameters
     public Investment(User user, Company company, Cryptocurrency cryptocurrency, double amount, double price) {
         this();
         this.user = user;
@@ -29,95 +27,93 @@ public class Investment {
     }
 
     // Getters and Setters
-    // id
-    public UUID getId() {
-        return id;
-    }
-
-    // user
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+        setUpdatedAtNow();
     }
 
-    // company
     public Company getCompany() {
         return company;
     }
 
     public void setCompany(Company company) {
         this.company = company;
+        setUpdatedAtNow();
     }
 
-    // cryptocurrency
     public Cryptocurrency getCryptocurrency() {
         return cryptocurrency;
     }
 
     public void setCryptocurrency(Cryptocurrency cryptocurrency) {
         this.cryptocurrency = cryptocurrency;
+        setUpdatedAtNow();
     }
 
-    // amount
     public double getAmount() {
         return amount;
     }
 
     public void setAmount(double amount) {
         this.amount = amount;
+        setUpdatedAtNow();
     }
 
-    // price
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
+        setUpdatedAtNow();
     }
 
-    // date
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    // transactions
     public List<Transaction> getTransactions() {
         return Collections.unmodifiableList(transactions);
     }
 
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
+        setUpdatedAtNow();
     }
 
     // Utility methods
-    // Gets the total value of the investment
     public double getTotalValue() {
         return amount * price;
     }
 
-    // Gets the current value of the investment
     public double getCurrentValue() {
         return amount * cryptocurrency.getPrice();
     }
 
-    // Gets the profit or loss of the investment
     public double getProfitOrLoss() {
         return getCurrentValue() - getTotalValue();
     }
 
-    // Gets percentage of profit or loss
     public double getProfitOrLossPercentage() {
         if (getTotalValue() == 0) {
             return 0;
         }
         return (getProfitOrLoss() / getTotalValue()) * 100;
+    }
+
+    // Overload: accepts a tolerance margin
+    public double getProfitOrLossPercentage(double tolerance) {
+        double percentage = getProfitOrLossPercentage();
+        return (Math.abs(percentage) < tolerance) ? 0 : percentage;
+    }
+
+    // Override: returns a summary of the investment
+    @Override
+    public String toString() {
+        return "Investment in " + cryptocurrency.getName() + " by " + user.getName() +
+                " | Amount: " + amount +
+                " | Purchase Price: " + price +
+                " | Current Value: " + getCurrentValue() +
+                " | Profit/Loss: " + getProfitOrLossPercentage() + "%";
     }
 }
