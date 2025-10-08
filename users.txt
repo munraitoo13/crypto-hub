@@ -1,0 +1,2 @@
+User{name='Tio Patinhas', email='patinhas@email.com', twoFactorAuth=false}
+User{name='Pato Donald', email='donald@email.com', twoFactorAuth=false}

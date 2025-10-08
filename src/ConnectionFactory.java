@@ -4,9 +4,9 @@ import java.sql.SQLException;
 
 public final class ConnectionFactory {
 
-    private static final String URL  = "URL";
-    private static final String USER = "User";
-    private static final String PASS = "Password";
+    private static final String URL  = "";
+    private static final String USER = "";
+    private static final String PASS = "";
 
     static {
         try {

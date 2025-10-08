@@ -1,164 +1,201 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.SQLException;
 
 public class Main {
+
     public static void main(String[] args) {
-        // Declarando as variáveis fora dos blocos
-        HashMap<User, Cryptocurrency> investments = new HashMap<>();
-
-        ArrayList<Cryptocurrency> cryptos = new ArrayList<>();
-        ArrayList<User> users = new ArrayList<>();
-
-        User user = null;
-        Company company = null;
-        Cryptocurrency crypto = null;
+        System.out.println("===== INICIANDO TESTES DE BANCO DE DADOS (FASE 6) =====");
 
         try {
-            user = new User();
-            user.setName("Tio Patinhas");
-            user.setEmail("patinhas@email.com");
-            System.out.println("Usuário criado: " + user.getName());
-
-            // user2
-            User user2 = new User();
-            user2.setName("Pato Donald");
-            user2.setEmail("donald@email.com");
-            System.out.println("Usuário criado: " + user2.getName());
-
-            // array list 1
-            users.add(user);
-            users.add(user2);
-
+            System.out.println("\n--- [TESTE] CRUD de User ---");
+            runUserDbCrudDemo();
         } catch (Exception e) {
-            System.out.println("Erro ao criar Usuário: " + e.getMessage());
-        }
-
-        try {
-            company = new Company();
-            company.setName("Patinhas Investimentos");
-            company.setCnpj("12.345.678/0001-99");
-            company.setType("Holding de Criptoativos");
-            System.out.println("Empresa criada: " + company.getName());
-        } catch (Exception e) {
-            System.out.println("Erro ao criar Empresa: " + e.getMessage());
-        }
-
-        try {
-            crypto = new Cryptocurrency();
-            crypto.setName("Bitcoin");
-            crypto.setSymbol("BTC");
-            crypto.setPrice(250000.0);
-            System.out.println("Criptomoeda criada: " + crypto.getName());
-
-            // crypto2
-            Cryptocurrency crypto2 = new Cryptocurrency();
-            crypto2.setName("Ethereum");
-            crypto2.setSymbol("ETH");
-            crypto2.setPrice(18000.0);
-            System.out.println("Criptomoeda criada: " + crypto2.getName());
-
-            // array list 2
-            cryptos.add(crypto);
-            cryptos.add(crypto2);
-        } catch (Exception e) {
-            System.out.println("Erro ao criar Criptomoeda: " + e.getMessage());
-        }
-
-        try {
-            Investment investment = new Investment(user, company, crypto, 2.0, 500000.0);
-            System.out.println("Investimento criado: " + investment.getAmount() + " unidades de " + crypto.getName());
-        } catch (Exception e) {
-            System.out.println("Erro ao criar Investimento: " + e.getMessage());
-        }
-
-        try {
-            Alert alert = new Alert(user, crypto, 260000.0, "Acima");
-            System.out.println("Alerta criado para " + alert.getCryptocurrency().getName() + " quando ultrapassar R$ " + alert.getTargetPrice());
-        } catch (Exception e) {
-            System.out.println("Erro ao criar Alerta: " + e.getMessage());
-        }
-
-        try {
-            Notification notification = new Notification(user, "Seu alerta foi disparado!", "WhatsApp");
-            System.out.println("Notificação criada para: " + notification.getUser().getName() + " via " + notification.getChannel());
-        } catch (Exception e) {
-            System.out.println("Erro ao criar Notificação: " + e.getMessage());
-        }
-
-        // hashmap com 2 classes (user e investment)
-        investments.put(user, crypto);
-
-        // log array lists and hashmaps
-        System.out.println(investments);
-        System.out.println(cryptos);
-        System.out.println(users);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt"))) {
-            for (User u : users) {
-                writer.write(u.toString());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
-        }
-
-        try {
-            runDbCrudDemo();  // INSERT -> UPDATE -> FIND -> LIST -> DELETE -> LIST
-        } catch (Exception e) {
+            System.err.println("Falha no teste de UserDAO!");
             e.printStackTrace();
         }
 
-    }
-  
-    // ===================== FASE 5 - TESTES DB (Investment) =====================
+        try {
+            System.out.println("\n--- [TESTE] CRUD de Company ---");
+            runCompanyDbCrudDemo();
+        } catch (Exception e) {
+            System.err.println("Falha no teste de CompanyDAO!");
+            e.printStackTrace();
+        }
 
-    static long dbTestInsert() throws Exception {
+        try {
+            System.out.println("\n--- [TESTE] CRUD de Cryptocurrency ---");
+            runCryptocurrencyDbCrudDemo();
+        } catch (Exception e) {
+            System.err.println("Falha no teste de CryptocurrencyDAO!");
+            e.printStackTrace();
+        }
+
+        try {
+            System.out.println("\n--- [TESTE] CRUD de Investment ---");
+            runInvestmentDbCrudDemo();
+        } catch (Exception e) {
+            System.err.println("Falha no teste de InvestmentDAO!");
+            e.printStackTrace();
+        }
+
+        System.out.println("\n===== TESTES DE BANCO DE DADOS FINALIZADOS =====");
+    }
+
+    // ===================== USER CRUD DEMO =====================
+
+    static void runUserDbCrudDemo() throws SQLException {
+        UserDAO dao = new UserDAO();
+        User user = new User();
+        user.setName("Huguinho");
+        user.setEmail("huguinho@email.com");
+        user.setPassword("senha123");
+        user.setTwoFactorAuth(false);
+
+        // INSERT
+        long novoId = dao.insert(user);
+        System.out.println("[DB][USER][INSERT] ID=" + novoId);
+
+        // UPDATE
+        user.setName("Huguinho Pato");
+        user.setTwoFactorAuth(true);
+        int rows = dao.update(novoId, user);
+        System.out.println("[DB][USER][UPDATE] Linhas afetadas=" + rows);
+
+        // SELECT by ID
+        var row = dao.findById(novoId);
+        System.out.println("[DB][USER][FIND] " + row);
+
+        // SELECT ALL
+        var allUsers = dao.listAll();
+        System.out.println("[DB][USER][LIST] Total=" + allUsers.size());
+        for (var r : allUsers) System.out.println("  - " + r);
+
+        // DELETE
+        rows = dao.deleteById(novoId);
+        System.out.println("[DB][USER][DELETE] Linhas afetadas=" + rows);
+
+        // SELECT ALL (para confirmar)
+        allUsers = dao.listAll();
+        System.out.println("[DB][USER][LIST] Total após delete=" + allUsers.size());
+    }
+
+    // ===================== COMPANY CRUD DEMO =====================
+
+    static void runCompanyDbCrudDemo() throws SQLException {
+        CompanyDAO dao = new CompanyDAO();
+        Company company = new Company("Empresa do Zezinho", "11.222.333/0001-44", "Startup");
+
+        // INSERT
+        long novoId = dao.insert(company);
+        System.out.println("[DB][COMPANY][INSERT] ID=" + novoId);
+
+        // UPDATE
+        company.setName("Zezinho Corp");
+        int rows = dao.update(novoId, company);
+        System.out.println("[DB][COMPANY][UPDATE] Linhas afetadas=" + rows);
+
+        // SELECT by ID
+        var row = dao.findById(novoId);
+        System.out.println("[DB][COMPANY][FIND] " + row);
+
+        // SELECT ALL
+        var allCompanies = dao.listAll();
+        System.out.println("[DB][COMPANY][LIST] Total=" + allCompanies.size());
+        for (var r : allCompanies) System.out.println("  - " + r);
+
+        // DELETE
+        rows = dao.deleteById(novoId);
+        System.out.println("[DB][COMPANY][DELETE] Linhas afetadas=" + rows);
+
+        // SELECT ALL (para confirmar)
+        allCompanies = dao.listAll();
+        System.out.println("[DB][COMPANY][LIST] Total após delete=" + allCompanies.size());
+    }
+
+    // ===================== CRYPTOCURRENCY CRUD DEMO =====================
+
+    static void runCryptocurrencyDbCrudDemo() throws SQLException {
+        CryptocurrencyDAO dao = new CryptocurrencyDAO();
+        Cryptocurrency crypto = new Cryptocurrency("Cardano", "ADA", 1.50, 1.45);
+
+        // INSERT
+        long novoId = dao.insert(crypto);
+        System.out.println("[DB][CRYPTO][INSERT] ID=" + novoId);
+
+        // UPDATE
+        crypto.setPrice(1.55);
+        int rows = dao.update(novoId, crypto);
+        System.out.println("[DB][CRYPTO][UPDATE] Linhas afetadas=" + rows);
+
+        // SELECT by ID
+        var row = dao.findById(novoId);
+        System.out.println("[DB][CRYPTO][FIND] " + row);
+
+        // SELECT ALL
+        var allCryptos = dao.listAll();
+        System.out.println("[DB][CRYPTO][LIST] Total=" + allCryptos.size());
+        for (var r : allCryptos) System.out.println("  - " + r);
+
+        // DELETE
+        rows = dao.deleteById(novoId);
+        System.out.println("[DB][CRYPTO][DELETE] Linhas afetadas=" + rows);
+
+        // SELECT ALL (para confirmar)
+        allCryptos = dao.listAll();
+        System.out.println("[DB][CRYPTO][LIST] Total após delete=" + allCryptos.size());
+    }
+
+    // ===================== INVESTMENT CRUD DEMO =====================
+
+    static void runInvestmentDbCrudDemo() throws Exception {
+        // Criar registros dependentes para o teste de Investment
+        UserDAO userDAO = new UserDAO();
+        User user = new User();
+        user.setName("Zezinho");
+        user.setEmail("zezinho@email.com");
+        user.setPassword("senha456");
+        long userId = userDAO.insert(user);
+
+        CompanyDAO companyDAO = new CompanyDAO();
+        Company company = new Company("Invest Zezinho", "44.555.666/0001-77", "Broker");
+        long companyId = companyDAO.insert(company);
+
+        CryptocurrencyDAO cryptoDAO = new CryptocurrencyDAO();
+        Cryptocurrency crypto = new Cryptocurrency("Solana", "SOL", 150.0, 148.0);
+        long cryptoId = cryptoDAO.insert(crypto);
+
+        System.out.println("[DB][INVESTMENT] Dependências criadas: userId=" + userId + ", companyId=" + companyId + ", cryptoId=" + cryptoId);
+
         InvestmentDAO dao = new InvestmentDAO();
-        long userId = 1L;     // ajuste se necessário
-        long companyId = 1L;  // ajuste se necessário
-        long cryptoId = 1L;   // ajuste se necessário
-        long id = dao.insert(userId, companyId, cryptoId, 0.25, 320000.00);
-        System.out.println("[DB][INSERT] id=" + id);
-        return id;
-    }
 
-    static void dbTestUpdate(long id) throws Exception {
-        InvestmentDAO dao = new InvestmentDAO();
-        int rows = dao.updateById(id, 0.30, 315000.00);
-        System.out.println("[DB][UPDATE] rows=" + rows + " id=" + id);
-    }
+        // INSERT
+        long novoId = dao.insert(userId, companyId, cryptoId, 10.5, 151.0);
+        System.out.println("[DB][INVESTMENT][INSERT] ID=" + novoId);
 
-    static void dbTestFind(long id) throws Exception {
-        InvestmentDAO dao = new InvestmentDAO();
-        var row = dao.findById(id);
-        System.out.println("[DB][FIND] " + row);
-    }
+        // UPDATE
+        int rows = dao.updateById(novoId, 12.0, 155.0);
+        System.out.println("[DB][INVESTMENT][UPDATE] Linhas afetadas=" + rows);
 
-    static void dbTestListAll() throws Exception {
-        InvestmentDAO dao = new InvestmentDAO();
-        java.util.List<InvestmentDAO.InvestmentRow> all = dao.listAll();
-        System.out.println("[DB][LIST] total=" + all.size());
-        for (var r : all) System.out.println("  - " + r);
-    }
+        // SELECT by ID
+        var row = dao.findById(novoId);
+        System.out.println("[DB][INVESTMENT][FIND] " + row);
 
-    static void dbTestDelete(long id) throws Exception {
-        InvestmentDAO dao = new InvestmentDAO();
-        int rows = dao.deleteById(id);
-        System.out.println("[DB][DELETE] rows=" + rows + " id=" + id);
-    }
+        // SELECT ALL
+        var allInvestments = dao.listAll();
+        System.out.println("[DB][INVESTMENT][LIST] Total=" + allInvestments.size());
+        for (var r : allInvestments) System.out.println("  - " + r);
 
-    /** Executa a sequência completa de testes da Fase 5 para Investment */
-    static void runDbCrudDemo() throws Exception {
-        long novoId = dbTestInsert();   // INSERT
-        dbTestUpdate(novoId);           // UPDATE
-        dbTestFind(novoId);             // SELECT by ID
-        dbTestListAll();                // SELECT *
-        dbTestDelete(novoId);           // DELETE
-        dbTestListAll();                // SELECT * (confirma remoção)
+        // DELETE
+        rows = dao.deleteById(novoId);
+        System.out.println("[DB][INVESTMENT][DELETE] Linhas afetadas=" + rows);
+
+        // SELECT ALL (para confirmar)
+        allInvestments = dao.listAll();
+        System.out.println("[DB][INVESTMENT][LIST] Total após delete=" + allInvestments.size());
+
+        // Limpar dependências
+        userDAO.deleteById(userId);
+        companyDAO.deleteById(companyId);
+        cryptoDAO.deleteById(cryptoId);
+        System.out.println("[DB][INVESTMENT] Dependências limpas.");
     }
-  
-// ===================== FIM FASE 5 - TESTES DB =====================
 }
