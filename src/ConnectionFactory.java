@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public final class ConnectionFactory {
 
-    private static final String URL  = "";
+    private static final String URL  = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
     private static final String USER = "";
     private static final String PASS = "";
 
